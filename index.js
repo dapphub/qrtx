@@ -32,7 +32,7 @@ qr.callback = function (err, result) {
     showTx(data)
   }
   else {
-    alert("QR code didn't scan. Try again!")
+    alert("QR code didn't scan. Try again! (Error: " + err + ")")
     location.reload()
   }
 }
