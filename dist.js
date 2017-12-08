@@ -75,8 +75,6 @@ window.broadcast = function () {
     if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
       var result = JSON.parse(xhr.responseText)
       console.log(result)
-      result.error = null
-      result.result = "0xbe25ed4820e5540dd5c609addc8f6f575a67759a61a4180b93799169234e14c2"
       if (result.error) {
         waiting.innerText = result.error.message
       } else {
