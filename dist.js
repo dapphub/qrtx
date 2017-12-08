@@ -33,8 +33,10 @@ qr.callback = function (err, result) {
     }
     showTx(data)
   }
-  else
-    console.error(err)
+  else {
+    alert("QR code didn't scan. Try again!")
+    location.reload()
+  }
 }
 
 upload.onchange = function () {
