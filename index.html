@@ -1,0 +1,73 @@
+<!doctype html>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ethereum QR Broadcaster</title>
+<style>
+  @font-face {
+    font-family: qrtx;
+    src: url(iosevka-ss09-regular.woff);
+    font-weight: 400;
+  }
+  
+  @font-face {
+    font-family: qrtx;
+    src: url(iosevka-ss09-light.woff);
+    font-weight: 100;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font: 42px qrtx; background: silver; }
+  
+  html, body, form {
+    width: 100%; height: 100%;
+  }
+
+  form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #upload { opacity: 0; position: absolute; }
+  label, table {
+    background: white;
+    border: 2pt solid #333;
+    padding: .25em .5em;
+    box-shadow: 4px 4px 0px #777;
+    transition: .25s ease all;
+  }
+
+  label:hover {
+  }
+
+  td:first-child { font-weight: 100; }
+  td { text-align: center; display: block; }
+  tr { padding-top: .5em; }
+
+  body.step1 #txform { display: none; }
+  body.step2 #qrform { display: none; }
+
+  table {
+    font-size: 22px;
+  }
+
+
+</style>
+<body class=step1>
+<form id=qrform>
+<input type=file id=upload accept=".jpg, .png">
+<label for=upload>Process QR</label>
+</form>
+<form id=txform method=POST>
+<table>
+<tbody>
+<tr><td>From:<td id=txFrom>
+<tr><td>To:<td id=txTo>
+<tr><td>Nonce:<td id=txNonce>
+<tr><td>Value:<td id=txValue>
+<tr><td>Gas limit:<td id=txGasLimit>
+<tr><td>Gas price:<td id=txGasPrice>
+<tr><td>Data:<td id=txData>
+</table>
+</form>
+<script src=dist.js></script>
