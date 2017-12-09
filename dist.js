@@ -5,10 +5,10 @@ var ethtx = require("ethereumjs-tx")
 var b64 = require("base64-js").toByteArray
 
 var chains = {
-  1: "Mainnet",
-  3: "Ropsten",
-  4: "Rinkeby",
-  42: "Kovan",
+  1: {name: "Mainnet", prefix: "", api: "api"},
+  3: {name: "Ropsten", prefix: "ropsten.", api: "ropsten"},
+  4: {name: "Rinkeby", prefix: "rinkeby.", api: "rinkeby"},
+  42: {name: "Kovan", prefix: "kovan.", api: "kovan"},
 }
 
 var txHex
@@ -41,20 +41,21 @@ qr.callback = function (err, result) {
 
 upload.onchange = function () {
   var reader = new FileReader()
-    reader.onload = function () {
+  reader.onload = function () {
     qr.decode(reader.result)
   }
   reader.readAsDataURL(this.files[0])
 }
 
 function showTx (data) {
+  var prefix = chains[data.chain].prefix
   txFrom.innerHTML =
-    '<a href="https://etherscan.io/address/0x' + data.from + '">' +
+    '<a href="https://' + prefix + 'etherscan.io/address/0x' + data.from + '" target="_blank">' +
        data.from.substr(0, 16) + "..." + "</a>"
   txTo.innerHTML =
-    '<a href="https://etherscan.io/address/0x' + data.to + '">' +
+    '<a href="https://' + prefix + 'etherscan.io/address/0x' + data.to + '" target="_blank">' +
        data.to.substr(0, 16) + "..." + "</a>"
-  txChain.innerText = chains[data.chain] || "(unknown chain " + data.chain + ")"
+  txChain.innerText = chains[data.chain].name || "(unknown chain " + data.chain + ")"
   txNonce.innerText = data.nonce
   txValue.innerText = data.value
   txData.innerText = data.data || "(no data)"
@@ -65,13 +66,10 @@ function showTx (data) {
 
 window.broadcast = function () {
   document.body.className = "step3"
-  if (tx.getChainId() != 1) {
-    alert("Only mainnet transactions supported.")
-    location.reload()
-  }
+  var chainId = tx.getChainId()
 
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "https://api.etherscan.io/api", true);
+  xhr.open("POST", "https://" + chains[chainId].api + ".etherscan.io/api", true);
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr.onreadystatechange = function () {
     if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
@@ -81,7 +79,8 @@ window.broadcast = function () {
         waiting.innerText = result.error.message
       } else {
         var link = document.createElement("A")
-        link.setAttribute("href", "https://etherscan.io/tx/" + result.result)
+        link.setAttribute("href", "https://" + chains[chainId].prefix + "etherscan.io/tx/" + result.result)
+        link.setAttribute("target", "_blank")
         link.innerText = result.result.substr(0, 16) + "..."
         waiting.innerHTML = ""
         waiting.appendChild(link)
@@ -8020,29 +8019,34 @@ utils.intFromLE = intFromLE;
 
 },{"bn.js":4,"minimalistic-assert":52,"minimalistic-crypto-utils":53}],25:[function(require,module,exports){
 module.exports={
-  "_from": "elliptic@^6.2.3",
+  "_args": [
+    [
+      "elliptic@6.4.0",
+      "/home/nanexcool/dapphub/qrtx"
+    ]
+  ],
+  "_from": "elliptic@6.4.0",
   "_id": "elliptic@6.4.0",
   "_inBundle": false,
   "_integrity": "sha1-ysmvh2LIWDYYcAPI3+GT5eLq5d8=",
   "_location": "/elliptic",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "version",
     "registry": true,
-    "raw": "elliptic@^6.2.3",
+    "raw": "elliptic@6.4.0",
     "name": "elliptic",
     "escapedName": "elliptic",
-    "rawSpec": "^6.2.3",
+    "rawSpec": "6.4.0",
     "saveSpec": null,
-    "fetchSpec": "^6.2.3"
+    "fetchSpec": "6.4.0"
   },
   "_requiredBy": [
     "/secp256k1"
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz",
-  "_shasum": "cac9af8762c85836187003c8dfe193e5e2eae5df",
-  "_spec": "elliptic@^6.2.3",
-  "_where": "/home/mbrock/dapphub/qrtx/node_modules/secp256k1",
+  "_spec": "6.4.0",
+  "_where": "/home/nanexcool/dapphub/qrtx",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -8050,7 +8054,6 @@ module.exports={
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "bn.js": "^4.4.0",
     "brorand": "^1.0.1",
@@ -8060,7 +8063,6 @@ module.exports={
     "minimalistic-assert": "^1.0.0",
     "minimalistic-crypto-utils": "^1.0.0"
   },
-  "deprecated": false,
   "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^1.4.3",
@@ -15431,8 +15433,8 @@ exports.isNumberInInterval = function (number, x, y, message) {
   if (number <= x || number >= y) throw RangeError(message)
 }
 
-}).call(this,{"isBuffer":require("../../../../../node_modules/lib/node_modules/browserify/node_modules/is-buffer/index.js")})
-},{"../../../../../node_modules/lib/node_modules/browserify/node_modules/is-buffer/index.js":81}],60:[function(require,module,exports){
+}).call(this,{"isBuffer":require("../../../../../../../usr/lib/node_modules/browserify/node_modules/is-buffer/index.js")})
+},{"../../../../../../../usr/lib/node_modules/browserify/node_modules/is-buffer/index.js":81}],60:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var bip66 = require('bip66')
