@@ -1,6 +1,7 @@
 var qr = new (require("qrcode-reader"))()
 var ethtx = require("ethereumjs-tx")
 var b64 = require("base64-js").toByteArray
+var instascan = require("instascan")
 
 var chains = {
   1: {name: "Mainnet", prefix: "", api: "api"},
@@ -37,6 +38,27 @@ qr.callback = function (err, result) {
   }
 }
 
+window.scan = function () {
+  var scanner = new instascan.Scanner({
+    video: document.getElementById('preview')
+  })
+  scanner.addListener('scan', function (result) {
+    scanner.stop()
+    qr.callback(null, {result: result})
+  })
+  instascan.Camera.getCameras().then(function (cameras) {
+    if (cameras.length > 0) {
+      scanner.start(cameras[0]).catch(function (e) {
+        console.log(e)
+      })
+    } else {
+      console.log('No cameras found.')
+    }
+  }).catch(function (e) {
+    console.log(e)
+  })
+}
+
 upload.onchange = function () {
   var reader = new FileReader()
   reader.onload = function () {
@@ -55,7 +77,7 @@ function showTx (data) {
        data.to.substr(0, 16) + "..." + "</a>"
   txChain.innerText = chains[data.chain].name || "(unknown chain " + data.chain + ")"
   txNonce.innerText = data.nonce
-  txValue.innerText = data.value
+  txValue.innerText = data.value || 0
   txData.innerText = data.data || "(no data)"
   txGasLimit.innerText = data.gasLimit
   txGasPrice.innerText = data.gasPrice
