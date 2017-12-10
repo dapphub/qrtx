@@ -43,6 +43,7 @@ window.scan = function () {
     video: document.getElementById('preview')
   })
   scanner.addListener('scan', function (result) {
+    scanner.stop()
     qr.callback(null, {result: result})
   })
   instascan.Camera.getCameras().then(function (cameras) {
@@ -76,7 +77,7 @@ function showTx (data) {
        data.to.substr(0, 16) + "..." + "</a>"
   txChain.innerText = chains[data.chain].name || "(unknown chain " + data.chain + ")"
   txNonce.innerText = data.nonce
-  txValue.innerText = data.value
+  txValue.innerText = data.value || 0
   txData.innerText = data.data || "(no data)"
   txGasLimit.innerText = data.gasLimit
   txGasPrice.innerText = data.gasPrice
