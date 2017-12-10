@@ -3,10 +3,10 @@ var ethtx = require("ethereumjs-tx")
 var b64 = require("base64-js").toByteArray
 
 var chains = {
-  1: "Mainnet",
-  3: "Ropsten",
-  4: "Rinkeby",
-  42: "Kovan",
+  1: {name: "Mainnet", prefix: "", api: "api"},
+  3: {name: "Ropsten", prefix: "ropsten.", api: "ropsten"},
+  4: {name: "Rinkeby", prefix: "rinkeby.", api: "rinkeby"},
+  42: {name: "Kovan", prefix: "kovan.", api: "kovan"},
 }
 
 var txHex
@@ -39,20 +39,21 @@ qr.callback = function (err, result) {
 
 upload.onchange = function () {
   var reader = new FileReader()
-    reader.onload = function () {
+  reader.onload = function () {
     qr.decode(reader.result)
   }
   reader.readAsDataURL(this.files[0])
 }
 
 function showTx (data) {
+  var prefix = chains[data.chain].prefix
   txFrom.innerHTML =
-    '<a href="https://etherscan.io/address/0x' + data.from + '">' +
+    '<a href="https://' + prefix + 'etherscan.io/address/0x' + data.from + '" target="_blank">' +
        data.from.substr(0, 16) + "..." + "</a>"
   txTo.innerHTML =
-    '<a href="https://etherscan.io/address/0x' + data.to + '">' +
+    '<a href="https://' + prefix + 'etherscan.io/address/0x' + data.to + '" target="_blank">' +
        data.to.substr(0, 16) + "..." + "</a>"
-  txChain.innerText = chains[data.chain] || "(unknown chain " + data.chain + ")"
+  txChain.innerText = chains[data.chain].name || "(unknown chain " + data.chain + ")"
   txNonce.innerText = data.nonce
   txValue.innerText = data.value
   txData.innerText = data.data || "(no data)"
@@ -63,13 +64,10 @@ function showTx (data) {
 
 window.broadcast = function () {
   document.body.className = "step3"
-  if (tx.getChainId() != 1) {
-    alert("Only mainnet transactions supported.")
-    location.reload()
-  }
+  var chainId = tx.getChainId()
 
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "https://api.etherscan.io/api", true);
+  xhr.open("POST", "https://" + chains[chainId].api + ".etherscan.io/api", true);
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr.onreadystatechange = function () {
     if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
@@ -79,7 +77,8 @@ window.broadcast = function () {
         waiting.innerText = result.error.message
       } else {
         var link = document.createElement("A")
-        link.setAttribute("href", "https://etherscan.io/tx/" + result.result)
+        link.setAttribute("href", "https://" + chains[chainId].prefix + "etherscan.io/tx/" + result.result)
+        link.setAttribute("target", "_blank")
         link.innerText = result.result.substr(0, 16) + "..."
         waiting.innerHTML = ""
         waiting.appendChild(link)
