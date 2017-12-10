@@ -1,6 +1,7 @@
 var qr = new (require("qrcode-reader"))()
 var ethtx = require("ethereumjs-tx")
 var b64 = require("base64-js").toByteArray
+var instascan = require("instascan")
 
 var chains = {
   1: {name: "Mainnet", prefix: "", api: "api"},
@@ -35,6 +36,26 @@ qr.callback = function (err, result) {
     alert("QR code didn't scan. Try again! (Error: " + err + ")")
     location.reload()
   }
+}
+
+window.scan = function () {
+  var scanner = new instascan.Scanner({
+    video: document.getElementById('preview')
+  })
+  scanner.addListener('scan', function (result) {
+    qr.callback(null, {result: result})
+  })
+  instascan.Camera.getCameras().then(function (cameras) {
+    if (cameras.length > 0) {
+      scanner.start(cameras[0]).catch(function (e) {
+        console.log(e)
+      })
+    } else {
+      console.log('No cameras found.')
+    }
+  }).catch(function (e) {
+    console.log(e)
+  })
 }
 
 upload.onchange = function () {

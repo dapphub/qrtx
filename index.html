@@ -58,11 +58,23 @@
     background: gold;
     font-weight: 400;
   }
+
+  #scan {
+    margin-top: 0em;
+    background: cornsilk;
+  }
+
+  video {
+    margin-top: 1em;
+  }
 </style>
 <body class=step1>
 <section id=qrform>
 <input type=file id=upload accept=".jpg, .png">
-<label for=upload>Process QR</label>
+<label for=upload>Upload QR</label>
+<p>or</p>
+<button id=scan onclick="scan()">Scan QR code using your webcam</button>
+<video id=preview></video>
 </section>
 <section id=txform>
 <table>
